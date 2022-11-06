@@ -1,24 +1,41 @@
-import logo from './logo.svg';
+import { Container, Grid } from '@mui/material';
+import { useEffect, useState } from 'react';
 import './App.css';
+import Header from './components/header/Header';
+import Item from './components/item/Item';
+import Search from './components/search/Search';
 
 function App() {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    getItems();
+  }, []);
+
+  const getItems = async () => {
+    const result = await fetch('https://front-test-api.herokuapp.com/api/product').then(resp => resp.json());
+    setItems(result);
+  }
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Header />
+      <Container style={{marginTop: '10px'}}>
+        <Search />
+        <Grid container spacing={2}>
+          {items.length ? 
+            items.map((item, index) => {
+              return(
+                <Grid item xs={3} key={index}>
+                  <Item item={item} />
+                </Grid>
+              )
+            })
+          : null}
+        </Grid>
+        <br/>
+      </Container>
+    </>
   );
 }
 
